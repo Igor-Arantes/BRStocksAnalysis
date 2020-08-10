@@ -1,55 +1,55 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[232]:
+# In[1]:
 
 
 # Libraries Importation
 
 
-# In[233]:
+# In[2]:
 
 
 import pandas as pd
 
 
-# In[234]:
+# In[3]:
 
 
 import seaborn as sns
 
 
-# In[235]:
+# In[4]:
 
 
 import matplotlib.pyplot as plt
 
 
-# In[236]:
+# In[5]:
 
 
 #Dada source
 
 
-# In[237]:
+# In[6]:
 
 
 url = "https://docs.google.com/spreadsheets/d/1I93xay8dfxiL25qYohMAFIbh204vHBJSC3iKm_Y-Apc/edit?usp=sharing"
 
 
-# In[238]:
+# In[7]:
 
 
 o = pd.read_html(url, index_col=1, skiprows = 1)
 
 
-# In[239]:
+# In[8]:
 
 
 xlsx_path = ('Carteira Acoes B3.xlsx')
 
 
-# In[240]:
+# In[9]:
 
 
 e = pd.read_excel(xlsx_path)
@@ -61,13 +61,13 @@ e = pd.read_excel(xlsx_path)
 
 
 
-# In[241]:
+# In[10]:
 
 
 #Fitting Data
 
 
-# In[242]:
+# In[11]:
 
 
 stocks_now = o[0]
@@ -82,19 +82,13 @@ stocks_dataframe.rename(columns={'Codigo da Açao':'Ticker', 'Valor Pago': 'Valo
 
 
 
-# In[ ]:
-
-
-
-
-
-# In[243]:
+# In[12]:
 
 
 #Pick Sotock by Ticker
 
 
-# In[244]:
+# In[13]:
 
 
 def ticker_location(ticker_desired):
@@ -102,25 +96,25 @@ def ticker_location(ticker_desired):
     
 
 
-# In[245]:
+# In[14]:
 
 
 #Finding the total price and add then to the dataframe
 
 
-# In[246]:
+# In[15]:
 
 
 stocks_dataframe['Valor Total'] = stocks_dataframe['Quantidade'] * stocks_dataframe['Valor_Pago']
 
 
-# In[247]:
+# In[16]:
 
 
 #Find Stock by Ticker
 
 
-# In[248]:
+# In[17]:
 
 
 def find_all_stock(ticker_desired):
@@ -133,13 +127,13 @@ def find_all_stock(ticker_desired):
 
 
 
-# In[249]:
+# In[18]:
 
 
 #Mean Value Stock Price
 
 
-# In[250]:
+# In[19]:
 
 
 def mean_price_paid(ticker_desired):
@@ -147,13 +141,13 @@ def mean_price_paid(ticker_desired):
     return round(x[-1]/x[1],2)
 
 
-# In[251]:
+# In[20]:
 
 
 #Sum of desired stock
 
 
-# In[252]:
+# In[21]:
 
 
 def sum_stock_desired(ticker_desired):
@@ -161,51 +155,51 @@ def sum_stock_desired(ticker_desired):
     return x[1]
 
 
-# In[253]:
+# In[22]:
 
 
 #valuation or devaluation in total
 
 
-# In[254]:
+# In[23]:
 
 
 def valuation(ticker_desired):
     return round((stocks_now.loc[ticker_desired, 'Preco']-mean_price_paid(ticker_desired))*sum_stock_desired(ticker_desired),2)
 
 
-# In[255]:
+# In[24]:
 
 
 #Percent variation
 
 
-# In[256]:
+# In[25]:
 
 
 def percent_variation(ticker_desired):
     return round(((stocks_now.loc[ticker_desired, 'Preco']-mean_price_paid(ticker_desired))/stocks_now.loc[ticker_desired, 'Preco'])*100,2)
 
 
-# In[257]:
+# In[26]:
 
 
 #Geting a series of uniques stocks names
 
 
-# In[258]:
+# In[27]:
 
 
 unique_stocks_ticker = stocks_dataframe['Ticker'].unique()
 
 
-# In[259]:
+# In[28]:
 
 
 #Creating a data frame with the main analysis values
 
 
-# In[420]:
+# In[29]:
 
 
 def main_analisys_values():
@@ -237,106 +231,55 @@ def main_analisys_values():
     return stocks_stats
 
 
-# In[421]:
+# In[30]:
 
 
 stocks_stats = main_analisys_values()
 
 
-# In[ ]:
+# In[31]:
 
 
 #Print the results
 
 
-# In[462]:
+# In[115]:
 
 
 print(stocks_stats)
 
 
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
+# In[106]:
+
+
+#Setting green to positive values and red to negative ones
+
+for i in range(0, len(stocks_stats.Valuation)):
+    if  stocks_stats.Valuation[i] >= 0:
+        custom_palette[stocks_stats.Ticker[i]] = 'g'
+    else:
+        custom_palette[stocks_stats.Ticker[i]] = 'r'
+        
+#Ploting valuations data
+sns.set(style='whitegrid')
+plt.figure(figsize=(15,8)) 
+sns.barplot(x='Ticker', y='Valuation', data=stocks_stats, palette=custom_palette)
+
+
+# In[114]:
+
+
+#Setting green to positive values and red to negative ones
+for i in range(0, len(stocks_stats['Percent variation'])):
+    if  stocks_stats['Percent variation'][i] >= 0:
+        custom_palette[stocks_stats.Ticker[i]] = 'g'
+    else:
+        custom_palette[stocks_stats.Ticker[i]] = 'r'
+        
+#Ploting percent data
+sns.set(style='whitegrid')
+plt.figure(figsize=(15,8)) 
+sns.barplot(x='Ticker', y='Percent variation', data=stocks_stats, palette=custom_palette)
 
 
 # In[ ]:
