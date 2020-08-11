@@ -1,55 +1,55 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[116]:
 
 
 # Libraries Importation
 
 
-# In[2]:
+# In[117]:
 
 
 import pandas as pd
 
 
-# In[3]:
+# In[118]:
 
 
 import seaborn as sns
 
 
-# In[4]:
+# In[119]:
 
 
 import matplotlib.pyplot as plt
 
 
-# In[5]:
+# In[120]:
 
 
 #Dada source
 
 
-# In[6]:
+# In[121]:
 
 
 url = "https://docs.google.com/spreadsheets/d/1I93xay8dfxiL25qYohMAFIbh204vHBJSC3iKm_Y-Apc/edit?usp=sharing"
 
 
-# In[7]:
+# In[122]:
 
 
 o = pd.read_html(url, index_col=1, skiprows = 1)
 
 
-# In[8]:
+# In[123]:
 
 
 xlsx_path = ('Carteira Acoes B3.xlsx')
 
 
-# In[9]:
+# In[124]:
 
 
 e = pd.read_excel(xlsx_path)
@@ -61,13 +61,13 @@ e = pd.read_excel(xlsx_path)
 
 
 
-# In[10]:
+# In[125]:
 
 
 #Fitting Data
 
 
-# In[11]:
+# In[126]:
 
 
 stocks_now = o[0]
@@ -82,13 +82,13 @@ stocks_dataframe.rename(columns={'Codigo da Açao':'Ticker', 'Valor Pago': 'Valo
 
 
 
-# In[12]:
+# In[127]:
 
 
 #Pick Sotock by Ticker
 
 
-# In[13]:
+# In[128]:
 
 
 def ticker_location(ticker_desired):
@@ -96,25 +96,25 @@ def ticker_location(ticker_desired):
     
 
 
-# In[14]:
+# In[129]:
 
 
 #Finding the total price and add then to the dataframe
 
 
-# In[15]:
+# In[130]:
 
 
 stocks_dataframe['Valor Total'] = stocks_dataframe['Quantidade'] * stocks_dataframe['Valor_Pago']
 
 
-# In[16]:
+# In[131]:
 
 
 #Find Stock by Ticker
 
 
-# In[17]:
+# In[132]:
 
 
 def find_all_stock(ticker_desired):
@@ -127,13 +127,13 @@ def find_all_stock(ticker_desired):
 
 
 
-# In[18]:
+# In[133]:
 
 
 #Mean Value Stock Price
 
 
-# In[19]:
+# In[134]:
 
 
 def mean_price_paid(ticker_desired):
@@ -141,13 +141,13 @@ def mean_price_paid(ticker_desired):
     return round(x[-1]/x[1],2)
 
 
-# In[20]:
+# In[135]:
 
 
 #Sum of desired stock
 
 
-# In[21]:
+# In[136]:
 
 
 def sum_stock_desired(ticker_desired):
@@ -155,51 +155,51 @@ def sum_stock_desired(ticker_desired):
     return x[1]
 
 
-# In[22]:
+# In[137]:
 
 
 #valuation or devaluation in total
 
 
-# In[23]:
+# In[138]:
 
 
 def valuation(ticker_desired):
     return round((stocks_now.loc[ticker_desired, 'Preco']-mean_price_paid(ticker_desired))*sum_stock_desired(ticker_desired),2)
 
 
-# In[24]:
+# In[139]:
 
 
 #Percent variation
 
 
-# In[25]:
+# In[140]:
 
 
 def percent_variation(ticker_desired):
     return round(((stocks_now.loc[ticker_desired, 'Preco']-mean_price_paid(ticker_desired))/stocks_now.loc[ticker_desired, 'Preco'])*100,2)
 
 
-# In[26]:
+# In[141]:
 
 
 #Geting a series of uniques stocks names
 
 
-# In[27]:
+# In[142]:
 
 
 unique_stocks_ticker = stocks_dataframe['Ticker'].unique()
 
 
-# In[28]:
+# In[143]:
 
 
 #Creating a data frame with the main analysis values
 
 
-# In[29]:
+# In[144]:
 
 
 def main_analisys_values():
@@ -231,25 +231,25 @@ def main_analisys_values():
     return stocks_stats
 
 
-# In[30]:
+# In[145]:
 
 
 stocks_stats = main_analisys_values()
 
 
-# In[31]:
+# In[146]:
 
 
 #Print the results
 
 
-# In[115]:
+# In[147]:
 
 
 print(stocks_stats)
 
 
-# In[106]:
+# In[148]:
 
 
 #Setting green to positive values and red to negative ones
@@ -266,7 +266,7 @@ plt.figure(figsize=(15,8))
 sns.barplot(x='Ticker', y='Valuation', data=stocks_stats, palette=custom_palette)
 
 
-# In[114]:
+# In[149]:
 
 
 #Setting green to positive values and red to negative ones
@@ -280,6 +280,86 @@ for i in range(0, len(stocks_stats['Percent variation'])):
 sns.set(style='whitegrid')
 plt.figure(figsize=(15,8)) 
 sns.barplot(x='Ticker', y='Percent variation', data=stocks_stats, palette=custom_palette)
+
+
+# In[ ]:
+
+
+#Finding the percent composition by ticker in the portifolio 
+
+
+# In[197]:
+
+
+stocks_stats['Composition'] = round(stocks_stats['Total Value Now']/stocks_stats['Total Value Now'].sum()*100,2)
+
+
+# In[150]:
+
+
+#Finding the portifolio performance overall 
+
+
+# In[181]:
+
+
+portifolio_performance = {'Total_Invested':[stocks_stats['Total Paid'].sum()],'Total_Value_Now':[stocks_stats['Total Value Now'].sum()]}
+
+
+# In[182]:
+
+
+portifolio_performance = pd.DataFrame(portifolio_performance)
+
+
+# In[188]:
+
+
+portifolio_performance['Total_Earn_Or_Loss'] = portifolio_performance.Total_Value_Now - portifolio_performance.Total_Invested 
+
+
+# In[194]:
+
+
+portifolio_performance['Total_Percent_Variation'] = round((portifolio_performance.Total_Value_Now/portifolio_performance.Total_Invested - 1)*100,2) 
+
+
+# In[198]:
+
+
+stocks_stats
+
+
+# In[274]:
+
+
+pie_plt = stocks_stats[['Ticker','Composition']]
+pie_plt.set_index('Ticker', inplace = True)
+pie_plt=pie_plt.groupby('Ticker')[['Composition']].sum()
+
+
+# In[276]:
+
+
+pie_plt.plot.pie(y='Composition',figsize=(12,12),shadow=True,autopct = '%1.2f%%')
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
