@@ -58,15 +58,21 @@ def portifolio_data_construction():
 def find_all_stock(ticker_desired):
     return bought_stocks_dataframe['Ticker']==ticker_desired       
 
+def sum_stock_desired(ticker_desired):
+    x=bought_stocks_dataframe[find_all_stock(ticker_desired)].sum()
+    return x[1]
+
 def mean_price_paid(ticker_desired):
     x=bought_stocks_dataframe[find_all_stock(ticker_desired)].sum()
     return round(x[-1]/x[1],2)
 
 def valuation(ticker_desired):
-    return round((actual_stock_values_dataframe.loc[ticker_desired, 'Preco']-mean_price_paid(ticker_desired))*sum_stock_desired(ticker_desired),2)
+    return round((actual_stock_values_dataframe.loc[ticker_desired, 'Price']-mean_price_paid(ticker_desired))*sum_stock_desired(ticker_desired),2)
+
+
 
 def percent_variation(ticker_desired):
-    return round(((actual_stock_values_dataframe.loc[ticker_desired, 'Preco']-mean_price_paid(ticker_desired))/actual_stock_values.loc[ticker_desired, 'Preco'])*100,2)
+    return round(((actual_stock_values_dataframe.loc[ticker_desired, 'Price']-mean_price_paid(ticker_desired))/actual_stock_values.loc[ticker_desired, 'Price'])*100,2)
 
 
 def main_analisys_values():
