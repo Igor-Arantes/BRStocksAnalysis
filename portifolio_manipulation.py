@@ -17,6 +17,7 @@ my_stocks_list = bought_stocks_dataframe['Ticker'].unique()
 
 actual_stock_values = {}
 actual_stock_values_dataframe = pd.DataFrame()
+main_analisys_values_dataframe = pd.DataFrame()
 
 
 #Functions for portifolio dataframe construction
@@ -28,13 +29,14 @@ def get_stocks_price():
     return(actual_stock_values)    
     
 
-def actual_stock_values_dataframe(actual_stock_values):
+def actual_stock_values_dataframe_construction(actual_stock_values):
     actual_stock_values_dataframe = pd.DataFrame()
     actual_stock_values_dataframe['Ticker'] = my_stocks_list
     actual_stocks_value_list = []
     for stocks in my_stocks_list:
         actual_stocks_value_list.append(actual_stock_values[stocks]['close'])
-    actual_stock_values_dataframe['Price'] = actual_stocks_value_list  
+    actual_stock_values_dataframe['Price'] = actual_stocks_value_list 
+    actual_stock_values_dataframe.set_index('Ticker', inplace=True)
     return(actual_stock_values_dataframe)   
     
 
@@ -66,8 +68,11 @@ def mean_price_paid(ticker_desired):
     x=bought_stocks_dataframe[find_all_stock(ticker_desired)].sum()
     return round(x[-1]/x[1],2)
 
-def valuation(ticker_desired):
-    return round((actual_stock_values_dataframe.loc[ticker_desired, 'Price']-mean_price_paid(ticker_desired))*sum_stock_desired(ticker_desired),2)
+def valuation():
+    v=[]    
+    for i in my_stocks_list:
+        v.append(round((actual_stock_values_dataframe.loc[i, 'Price']-mean_price_paid(i))*sum_stock_desired(i),2))
+    return v
 
 
 
@@ -75,32 +80,26 @@ def percent_variation(ticker_desired):
     return round(((actual_stock_values_dataframe.loc[ticker_desired, 'Price']-mean_price_paid(ticker_desired))/actual_stock_values.loc[ticker_desired, 'Price'])*100,2)
 
 
-def main_analisys_values():
-    stocks_stats = pd.DataFrame(my_stocks_list, columns=['Ticker'])
+def main_analisys_values_dataframe_construction():
+    main_analisys_values_dataframe = portifolio_dataframe
+    actual_stock_values_dataframe = actual_stock_values_dataframe_construction(actual_stock_values)
     v=[]
     for i in my_stocks_list:
-        v.append(mean_price_paid(i))
-    stocks_stats['Mean price paid'] = v
-    v=[]
-    for i in my_stocks_list:
-        v.append(sum_stock_desired(i))
-    stocks_stats['Qty'] = v
-    stocks_stats['Total Paid'] = stocks_stats['Mean price paid']*stocks_stats['Qty']
-    v=[]
-    for i in my_stocks_list:
-        v.append(actual_stock_values.loc[i, 'Preco'])
-    stocks_stats['Un Value Now'] = v
-    stocks_stats['Total Value Now'] = stocks_stats['Un Value Now']*stocks_stats['Qty']
-    stocks_stats.drop(columns='Un Value Now', inplace=True)
-    v=[]    
-    for i in my_stocks_list:
-        v.append(valuation(i))
-    stocks_stats['Valuation'] = v
-    v=[]
-    for i in my_stocks_list:
-        v.append(percent_variation(i))
-    stocks_stats['Percent variation'] = v
-    v=[]
-    return stocks_stats
+        v.append(actual_stock_values_dataframe.loc[i, 'Price'])
+    main_analisys_values_dataframe['Unitary Price Now'] = v
+    
+    main_analisys_values_dataframe['Total Price Now'] = main_analisys_values_dataframe['Qty'] * main_analisys_values_dataframe['Unitary Price Now']
+    
+    main_analisys_values_dataframe['Valuation'] =round( main_analisys_values_dataframe['Unitary Price Now'] - main_analisys_values_dataframe['Mean Price Paid'] * main_analisys_values_dataframe['Qty'],2)
+    
+    main_analisys_values_dataframe['Percent Variation'] = round((main_analisys_values_dataframe['Unitary Price Now']- main_analisys_values_dataframe['Mean Price Paid'])/main_analisys_values_dataframe['Unitary Price Now']*100,2)
+    
+    return(main_analisys_values_dataframe)
+    
+    
+  
+    
+portifolio_dataframe = portifolio_data_construction()   
+    
 
 
