@@ -68,13 +68,6 @@ def mean_price_paid(ticker_desired):
     x=bought_stocks_dataframe[find_all_stock(ticker_desired)].sum()
     return round(x[-1]/x[1],2)
 
-def valuation():
-    v=[]    
-    for i in my_stocks_list:
-        v.append(round((actual_stock_values_dataframe.loc[i, 'Price']-mean_price_paid(i))*sum_stock_desired(i),2))
-    return v
-
-
 
 def percent_variation(ticker_desired):
     return round(((actual_stock_values_dataframe.loc[ticker_desired, 'Price']-mean_price_paid(ticker_desired))/actual_stock_values.loc[ticker_desired, 'Price'])*100,2)
@@ -90,16 +83,30 @@ def main_analisys_values_dataframe_construction():
     
     main_analisys_values_dataframe['Total Price Now'] = main_analisys_values_dataframe['Qty'] * main_analisys_values_dataframe['Unitary Price Now']
     
-    main_analisys_values_dataframe['Valuation'] =round( main_analisys_values_dataframe['Unitary Price Now'] - main_analisys_values_dataframe['Mean Price Paid'] * main_analisys_values_dataframe['Qty'],2)
+    main_analisys_values_dataframe['Valuation'] =round( (main_analisys_values_dataframe['Unitary Price Now'] - main_analisys_values_dataframe['Mean Price Paid']) * main_analisys_values_dataframe['Qty'],2)
     
     main_analisys_values_dataframe['Percent Variation'] = round((main_analisys_values_dataframe['Unitary Price Now']- main_analisys_values_dataframe['Mean Price Paid'])/main_analisys_values_dataframe['Unitary Price Now']*100,2)
     
+    main_analisys_values_dataframe['Composition'] = round(main_analisys_values_dataframe['Total Price Now']/main_analisys_values_dataframe['Total Price Now'].sum()*100,2)
+    
     return(main_analisys_values_dataframe)
     
-    
+portifolio_dataframe = portifolio_data_construction()       
   
+
+def get_portifolio_perfomace():
+    portifolio_performance_dic = {'Total_Invested':[main_analisys_values_dataframe['Total Paid'].sum()],'Total_Value_Now':[main_analisys_values_dataframe['Total Price Now'].sum()]}
+    portifolio_performance = pd.DataFrame(portifolio_performance_dic)
+    portifolio_performance['Total_Earn_Or_Loss'] = portifolio_performance.Total_Value_Now - portifolio_performance.Total_Invested 
+    portifolio_performance['Total_Percent_Variation'] = round((portifolio_performance.Total_Value_Now/portifolio_performance.Total_Invested - 1)*100,2) 
     
-portifolio_dataframe = portifolio_data_construction()   
-    
+    return(portifolio_performance)
 
 
+def get_all_dataframes():
+    actual_stock_values_dataframe = actual_stock_values_dataframe_construction(get_stocks_price())
+    main_analisys_values_dataframe = main_analisys_values_dataframe_construction()
+    portifolio_dataframe = portifolio_data_construction()   
+    portifolio_performance = get_portifolio_perfomace()
+    
+    return(actual_stock_values_dataframe, portifolio_dataframe, main_analisys_values_dataframe, portifolio_performance)
