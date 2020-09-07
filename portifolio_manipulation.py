@@ -103,10 +103,11 @@ def get_portifolio_perfomace():
     return(portifolio_performance)
 
 
-def get_all_dataframes():
-    actual_stock_values_dataframe = actual_stock_values_dataframe_construction(get_stocks_price())
-    main_analisys_values_dataframe = main_analisys_values_dataframe_construction()
-    portifolio_dataframe = portifolio_data_construction()   
-    portifolio_performance = get_portifolio_perfomace()
+
+actual_stock_values_dataframe = actual_stock_values_dataframe_construction(get_stocks_price())
+main_analisys_values_dataframe = main_analisys_values_dataframe_construction()
+portifolio_dataframe = portifolio_data_construction()   
+portifolio_performance = get_portifolio_perfomace()
     
-    return(actual_stock_values_dataframe, portifolio_dataframe, main_analisys_values_dataframe, portifolio_performance)
+
+

@@ -266,7 +266,7 @@ plt.figure(figsize=(15,8))
 sns.barplot(x='Ticker', y='Valuation', data=stocks_stats, palette=custom_palette)
 
 
-# In[104]:
+# In[34]:
 
 
 #Setting green to positive values and red to negative ones
@@ -369,7 +369,7 @@ pie_plt=pie_plt.groupby('Classe')[['Composition']].sum()
 pie_plt.plot.pie(y='Composition',figsize=(12,12),shadow=True,autopct = '%1.2f%%')
 
 
-# In[129]:
+# In[48]:
 
 
 plt.figure(figsize=(10,12)) 
