@@ -18,5 +18,9 @@ def get_sold_table():
     return pd.read_sql(query, dbc.conn)
 
 def register_purchase(Ticker, QTY, Price, Class, Purchase_Date, Market):
-    return dbc.cur.execute("INSERT INTO purchased(ID, Ticker,  QTY , Price ,  Class, Purchase_Date, Market) VALUES(NULL, ?,?,?,?,?,?);",(Ticker, QTY, Price, Class, Purchase_Date, Market))
+    return dbc.cur.execute("INSERT INTO purchased(ID, Ticker,  QTY , Price ,  Class, Purchase_Date, Market) VALUES(NULL, ?,?,?,?,?,?);",(Ticker, QTY, Price, Class, Purchase_Date, Market)), dbc.conn.commit()
+
+def register_sales(Ticker, QTY, Price, Sale_Date, Market):
+    return dbc.cur.execute("INSERT INTO sales(ID, Ticker,  QTY , Price ,  Class, Sale_Date, Market) VALUES(NULL, ?,?,?,?,?,?);",(Ticker, QTY, Price, Sale_Date, Market)), dbc.conn.commit()
+
 
